@@ -35,7 +35,7 @@ function RiakStorage(config) {
 
   this.bucket = config.bucket;
 
-  this.client = riak.getClient({
+  this.client = riak({
     host: config.host || defaults.host,
     port: config.port || defaults.port,
     debug: (config.debug === undefined) ? defaults.debug : config.debug
