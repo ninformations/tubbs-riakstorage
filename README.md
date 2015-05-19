@@ -10,17 +10,37 @@ Example:
 --------
 
 ```js
-var Tubbs = require('tubbs');
+var Tubbs = require("tubbs");
+var Validate = require("tubbs/lib/validate");
+var Memory = require("tubbs/lib/memory");
 var RiakStorage = require('tubbs-riakstorage');
 
-var User = Tubbs.create({
+var dataStore = new RiakStorage({ host:'192.168.33.101', bucket: 'users' });
 
+function User(data) {
+  this.setData(data);
+}
+
+Tubbs(User, {
   // Persist our data with Riak
-  dataStore: new RiakStorage({ bucket: 'users' }),
+  dataStore: dataStore,
+  primaryKey: 'username',
+  fields: {
+    username: undefined,
+    password: undefined,
+    first: "Rad",
+    last: undefined,
+    email: undefined
+  },
 
-  // ...
-
+  virtual: {
+    name: function() {
+      return ((this.first || '') + ' ' + (this.last || '')).trim();
+    }
+  }
 });
+
+module.exports = dataStore.DataType = User;
 ```
 
 See [Tubbs](https://github.com/dandean/tubbs) for more information.
